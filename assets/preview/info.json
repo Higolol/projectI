@@ -1,0 +1,106 @@
+{
+  "Моя тетрадь для подростков.pdf": [
+    {
+      "page": 1,
+      "image": "assets/preview/my_page_1.png",
+      "text_snippet": ""
+    },
+    {
+      "page": 2,
+      "image": "assets/preview/my_page_2.png",
+      "text_snippet": ""
+    },
+    {
+      "page": 3,
+      "image": "assets/preview/my_page_3.png",
+      "text_snippet": "с"
+    },
+    {
+      "page": 4,
+      "image": "assets/preview/my_page_4.png",
+      "text_snippet": "1\n2\n3\n4\n5\n6\n6\n1\n2\n3\n4\n5\n6"
+    },
+    {
+      "page": 5,
+      "image": "assets/preview/my_page_5.png",
+      "text_snippet": ""
+    },
+    {
+      "page": 6,
+      "image": "assets/preview/my_page_6.png",
+      "text_snippet": ""
+    },
+    {
+      "page": 7,
+      "image": "assets/preview/my_page_7.png",
+      "text_snippet": "Отметь день, когда ты \nвыполнил привычку\nВыполнение запланированное\nкаждый день приближает\nк достижению своей цели\nВыполнение запланированное\nкаждый день приближает\nк достижению своей цели"
+    },
+    {
+      "page": 8,
+      "image": "assets/preview/my_page_8.png",
+      "text_snippet": ""
+    },
+    {
+      "page": 9,
+      "image": "assets/preview/my_page_9.png",
+      "text_snippet": ""
+    },
+    {
+      "page": 10,
+      "image": "assets/preview/my_page_10.png",
+      "text_snippet": ""
+    }
+  ],
+  "Тетрадь самоконтроля подростков.pdf": [
+    {
+      "page": 1,
+      "image": "assets/preview/self_page_1.png",
+      "text_snippet": ""
+    },
+    {
+      "page": 2,
+      "image": "assets/preview/self_page_2.png",
+      "text_snippet": ""
+    },
+    {
+      "page": 3,
+      "image": "assets/preview/self_page_3.png",
+      "text_snippet": "с"
+    },
+    {
+      "page": 4,
+      "image": "assets/preview/self_page_4.png",
+      "text_snippet": "1\n2\n3\n4\n5\n6\n6\n1\n2\n3\n4\n5\n6"
+    },
+    {
+      "page": 5,
+      "image": "assets/preview/self_page_5.png",
+      "text_snippet": ""
+    },
+    {
+      "page": 6,
+      "image": "assets/preview/self_page_6.png",
+      "text_snippet": ""
+    },
+    {
+      "page": 7,
+      "image": "assets/preview/self_page_7.png",
+      "text_snippet": "Отметь день, когда ты \nвыполнил привычку\nВыполнение запланированное\nкаждый день приближает\nк достижению своей цели\nВыполнение запланированное\nкаждый день приближает\nк достижению своей цели"
+    },
+    {
+      "page": 8,
+      "image": "assets/preview/self_page_8.png",
+      "text_snippet": ""
+    },
+    {
+      "page": 9,
+      "image": "assets/preview/self_page_9.png",
+      "text_snippet": ""
+    },
+    {
+      "page": 10,
+      "image": "assets/preview/self_page_10.png",
+      "text_snippet": ""
+    }
+  ]
+}
