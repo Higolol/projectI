@@ -325,6 +325,11 @@ h1, h2, h3, h4 {
   transition: var(--transition);
 }
 
+.site-header .container {
+  max-width: 1360px;
+  padding-inline: 16px;
+}
+
 .site-header.scrolled {
   background: rgba(10, 3, 20, 0.96);
   border-bottom-color: rgba(255, 106, 0, 0.35);
@@ -336,16 +341,16 @@ h1, h2, h3, h4 {
   align-items: center;
   justify-content: space-between;
   height: var(--header-height);
-  gap: 16px;
+  gap: 12px;
 }
 
 .logo {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   font-family: var(--font-heading);
   font-weight: 800;
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   letter-spacing: -0.01em;
   flex-shrink: 0;
 }
@@ -367,25 +372,25 @@ h1, h2, h3, h4 {
   font-size: 0.65rem;
   background: var(--accent-gold);
   color: #120624;
-  padding: 2px 7px;
+  padding: 2px 6px;
   border-radius: 4px;
   font-weight: 800;
   letter-spacing: 0.05em;
-  margin-left: 6px;
+  margin-left: 4px;
 }
 
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
 }
 
 .nav-link {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 600;
   color: var(--text-muted);
   position: relative;
-  padding: 6px 12px;
+  padding: 6px 10px;
   border-radius: var(--radius-full);
   transition: var(--transition);
   white-space: nowrap;
@@ -405,7 +410,25 @@ h1, h2, h3, h4 {
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.header-tg-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  font-size: 0.82rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.header-order-btn {
+  padding: 7px 16px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  white-space: nowrap;
   flex-shrink: 0;
 }
 
@@ -2111,7 +2134,26 @@ dialog[open] {
 /* ==========================================================================
    Responsive Breakpoints
    ========================================================================== */
-@media (max-width: 1024px) {
+@media (max-width: 1260px) {
+  .header-tg-text {
+    display: none;
+  }
+  .header-tg-btn {
+    padding: 7px 9px;
+  }
+  .nav-links {
+    gap: 2px;
+  }
+  .nav-link {
+    padding: 5px 8px;
+    font-size: 0.78rem;
+  }
+  .logo-badge {
+    display: none;
+  }
+}
+
+@media (max-width: 1080px) {
   .nav-links {
     position: fixed;
     top: var(--header-height);
@@ -2152,8 +2194,12 @@ dialog[open] {
     display: flex;
     flex-shrink: 0;
   }
-  .header-actions .btn-primary {
-    display: none;
+  .header-actions {
+    gap: 8px;
+  }
+  .header-order-btn {
+    padding: 6px 12px;
+    font-size: 0.8rem;
   }
 
   .hero-grid {
@@ -2314,5 +2360,11 @@ dialog[open] {
   }
   .pricing-card {
     padding: 28px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-tg-btn {
+    display: none;
   }
 }

@@ -244,7 +244,16 @@ const WORKBOOK_PAGES = [
 // ==========================================================================
 let currentPageIdx = 0;
 
+// Ensure page always starts at top if opened without an anchor hash
+if ('scrollRestoration' in history) {
+  history.scrollRestoration = 'manual';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  if (!window.location.hash) {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }
+
   initHeader();
   initShowcase();
   initQuiz();
@@ -390,11 +399,11 @@ function initShowcase() {
     btn.type = 'button';
     btn.className = `page-tab-btn ${idx === 0 ? 'active' : ''}`;
     btn.innerHTML = `<span>Стр. ${item.page}</span> <small>— ${item.title.split(' ')[0]}</small>`;
-    btn.addEventListener('click', () => renderPage(idx));
+    btn.addEventListener('click', () => renderPage(idx, true));
     tabsContainer.appendChild(btn);
   });
 
-  function renderPage(idx) {
+  function renderPage(idx, scrollTabs = false) {
     currentPageIdx = idx;
     const data = WORKBOOK_PAGES[idx];
 
@@ -404,8 +413,16 @@ function initShowcase() {
       tab.classList.toggle('active', i === idx);
     });
 
-    // Scroll active tab into view if needed
-    tabs[idx]?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    // Scroll active tab inside horizontal tabs container ONLY (never scroll window)
+    if (scrollTabs && tabs[idx]) {
+      const containerWidth = tabsContainer.clientWidth;
+      const tabLeft = tabs[idx].offsetLeft;
+      const tabWidth = tabs[idx].clientWidth;
+      tabsContainer.scrollTo({
+        left: tabLeft - (containerWidth / 2) + (tabWidth / 2),
+        behavior: 'smooth'
+      });
+    }
 
     // Update Image with subtle fade
     imgEl.style.opacity = '0.3';
@@ -441,12 +458,12 @@ function initShowcase() {
   // Next / Prev listeners
   prevBtn?.addEventListener('click', () => {
     const newIdx = (currentPageIdx - 1 + WORKBOOK_PAGES.length) % WORKBOOK_PAGES.length;
-    renderPage(newIdx);
+    renderPage(newIdx, true);
   });
 
   nextBtn?.addEventListener('click', () => {
     const newIdx = (currentPageIdx + 1) % WORKBOOK_PAGES.length;
-    renderPage(newIdx);
+    renderPage(newIdx, true);
   });
 
   // Zoom click
@@ -461,15 +478,15 @@ function initShowcase() {
 
     if (e.key === 'ArrowRight') {
       const newIdx = (currentPageIdx + 1) % WORKBOOK_PAGES.length;
-      renderPage(newIdx);
+      renderPage(newIdx, true);
     } else if (e.key === 'ArrowLeft') {
       const newIdx = (currentPageIdx - 1 + WORKBOOK_PAGES.length) % WORKBOOK_PAGES.length;
-      renderPage(newIdx);
+      renderPage(newIdx, true);
     }
   });
 
-  // Initial render
-  renderPage(0);
+  // Initial render (do NOT scroll tabs or window on initial load)
+  renderPage(0, false);
 }
 
 // ==========================================================================
