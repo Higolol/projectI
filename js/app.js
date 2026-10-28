@@ -721,7 +721,7 @@ function initModals() {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       const planName = btn.getAttribute('data-plan-name') || 'Печатная тетрадь (Хит)';
-      const planPrice = btn.getAttribute('data-plan-price') || '1 490 ₽';
+      const planPrice = btn.getAttribute('data-plan-price') || '780 ₽';
 
       const parentCard = btn.closest('.pricing-card');
       if (parentCard) {

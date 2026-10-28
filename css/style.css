@@ -1183,7 +1183,21 @@ h1, h2, h3, h4 {
   border-left: 4px solid var(--accent-gold);
   padding: 18px 24px;
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  margin-bottom: 24px;
+}
+
+.author-story-body {
+  font-size: 0.98rem;
+  line-height: 1.68;
+  color: #D1C5DE;
   margin-bottom: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.author-story-body p strong {
+  color: #FFF;
 }
 
 .author-creds-grid {
