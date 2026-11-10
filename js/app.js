@@ -768,33 +768,178 @@ function openOrderModal(planName, planPrice) {
   });
 
   orderModal?.showModal();
+  setTimeout(() => {
+    document.getElementById('orderEmail')?.focus();
+  }, 120);
 }
 
 // ==========================================================================
-// Order Form & Feedback Toast
+// Telegram Notification Helper
+// ==========================================================================
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+async function sendTelegramOrderNotification(orderData) {
+  const config = window.TELEGRAM_CONFIG || {};
+  const token = (config.botToken || '').trim();
+  const chatId = (config.chatId || '').trim();
+
+  const now = new Date();
+  const dateStr = now.toLocaleString('ru-RU', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+
+  const messageText =
+    `🔔 <b>НОВЫЙ ЗАКАЗ НА САЙТЕ!</b>\n` +
+    `──────────────────────\n` +
+    `📦 <b>Тариф:</b> ${escapeHtml(orderData.plan)}\n` +
+    `💰 <b>Стоимость:</b> ${escapeHtml(orderData.price)}\n` +
+    `✉️ <b>Email клиента:</b> <code>${escapeHtml(orderData.email)}</code>\n` +
+    (orderData.name ? `👤 <b>Имя:</b> ${escapeHtml(orderData.name)}\n` : '') +
+    (orderData.contact ? `📱 <b>Телефон/TG:</b> ${escapeHtml(orderData.contact)}\n` : '') +
+    `⏰ <b>Время заказа:</b> ${dateStr} (МСК)\n` +
+    `──────────────────────\n` +
+    `👉 <i>Клиент ожидает ссылку на оплату на указанный email.</i>`;
+
+  // Check if credentials are configured
+  if (!token || !chatId || token === 'YOUR_BOT_TOKEN' || chatId === 'YOUR_CHAT_ID') {
+    if (config.debug) {
+      console.warn(
+        '[Telegram Order] ⚠️ Токен бота или Chat ID не настроены в js/config.js.\n' +
+        'Для отправки реальных уведомлений укажите botToken и chatId.\n' +
+        'Сформированное сообщение для Telegram:\n' + messageText
+      );
+    }
+    return { success: true, simulated: true };
+  }
+
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 6000);
+
+    const url = `https://api.telegram.org/bot${token}/sendMessage`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: messageText,
+        parse_mode: 'HTML'
+      }),
+      signal: controller.signal
+    });
+
+    clearTimeout(timeoutId);
+    const result = await response.json();
+
+    if (!response.ok || !result.ok) {
+      console.error('[Telegram Order] ❌ Ошибка ответа Telegram API:', result);
+      return { success: false, error: result };
+    }
+
+    if (config.debug) {
+      console.log('[Telegram Order] ✅ Уведомление успешно доставлено в Telegram бот!', result);
+    }
+    return { success: true, result };
+  } catch (err) {
+    console.error('[Telegram Order] ⚠️ Ошибка при отправке в Telegram:', err);
+    return { success: false, error: err };
+  }
+}
+
+// ==========================================================================
+// Order Form & Payment Flow
 // ==========================================================================
 function initForms() {
   const orderForm = document.getElementById('orderForm');
+  const orderModal = document.getElementById('orderModal');
+  const successModal = document.getElementById('paymentSuccessModal');
   const toast = document.getElementById('toastNotice');
   const toastMsg = document.getElementById('toastNoticeMsg');
 
-  orderForm?.addEventListener('submit', (e) => {
+  orderForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const name = document.getElementById('orderName')?.value || 'Гость';
-    const contact = document.getElementById('orderContact')?.value || '';
-    const plan = document.getElementById('orderPlanSelect')?.value || 'Печатная тетрадь';
 
-    // Close modal
-    const orderModal = document.getElementById('orderModal');
+    const nameInput = document.getElementById('orderName');
+    const contactInput = document.getElementById('orderContact');
+    const emailInput = document.getElementById('orderEmail');
+    const planInput = document.getElementById('orderPlanSelect');
+    const priceInput = document.getElementById('orderPlanPrice');
+    const submitBtn = document.getElementById('orderSubmitBtn') || orderForm.querySelector('button[type="submit"]');
+
+    const name = nameInput?.value.trim() || '';
+    const contact = contactInput?.value.trim() || '';
+    const email = emailInput?.value.trim() || '';
+    const plan = planInput?.value || 'Печатная тетрадь (Хит)';
+    const price = priceInput?.value || '780 ₽';
+
+    if (!email) {
+      emailInput?.focus();
+      return;
+    }
+
+    // Loading state for submit button
+    const originalBtnText = submitBtn ? submitBtn.innerHTML : '';
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `
+        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+          <svg class="spin-animation" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle><path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"></path></svg>
+          <span>Формируем ссылку...</span>
+        </span>
+      `;
+    }
+
+    // Send Telegram notification
+    await sendTelegramOrderNotification({
+      name,
+      contact,
+      email,
+      plan,
+      price
+    });
+
+    // Restore button state
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalBtnText;
+    }
+
+    // Close order modal
     orderModal?.close();
 
-    // Show celebratory toast
+    // Populate and open success modal
+    const successEmailEl = document.getElementById('successModalEmail');
+    const successPlanEl = document.getElementById('successModalPlan');
+    const successPriceEl = document.getElementById('successModalPrice');
+
+    if (successEmailEl) successEmailEl.textContent = email;
+    if (successPlanEl) successPlanEl.textContent = plan;
+    if (successPriceEl) successPriceEl.textContent = price;
+
+    if (successModal) {
+      successModal.showModal();
+    }
+
+    // Also trigger celebratory toast
     if (toast && toastMsg) {
-      toastMsg.innerHTML = `<strong>Спасибо, ${name}!</strong> Ваша заявка на «${plan}» принята. Наш менеджер уже связывается в ${contact ? contact : 'Telegram'}.`;
+      toastMsg.innerHTML = `<strong>Ссылка на оплату отправлена!</strong> На почту <u>${email}</u> (${plan}).`;
       toast.classList.add('show');
       setTimeout(() => {
         toast.classList.remove('show');
-      }, 5500);
+      }, 6000);
     }
 
     orderForm.reset();

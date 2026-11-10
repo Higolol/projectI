@@ -917,7 +917,7 @@
       
       <div class="order-modal-header">
         <h3 id="orderModalTitle">Оформление заказа</h3>
-        <p>Выберите удобный формат тетради и укажите контакт для отправки.</p>
+        <p>Укажите вашу почту — мы моментально направим ссылку на оплату выбранного тарифа.</p>
       </div>
 
       <form id="orderForm">
@@ -955,28 +955,81 @@
         <input type="hidden" id="orderPlanPrice" value="780 ₽">
 
         <div class="form-group">
+          <label for="orderEmail">Email (куда отправить ссылку на оплату): <span style="color: var(--accent-orange); font-weight: 800;">*</span></label>
+          <input type="email" id="orderEmail" class="form-input" placeholder="например: anna@mail.ru" required>
+          <div style="font-size: 0.78rem; color: var(--accent-gold); margin-top: 6px; display: flex; align-items: center; gap: 6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            <span>Ссылка на защищённую оплату будет отправлена на эту почту</span>
+          </div>
+        </div>
+
+        <div class="form-group">
           <label for="orderName">Ваше имя (как к вам обращаться):</label>
-          <input type="text" id="orderName" class="form-input" placeholder="Например: Мария" required>
+          <input type="text" id="orderName" class="form-input" placeholder="Например: Мария">
         </div>
 
         <div class="form-group">
-          <label for="orderContact">Телефон или ник в Telegram / WhatsApp:</label>
-          <input type="text" id="orderContact" class="form-input" placeholder="+7 (999) 000-00-00 или @username" required>
+          <label for="orderContact">Телефон или ник в Telegram (по желанию):</label>
+          <input type="text" id="orderContact" class="form-input" placeholder="+7 (999) 000-00-00 или @username">
         </div>
 
-        <div class="form-group">
-          <label for="orderEmail">Email (для отправки чека и PDF-материалов):</label>
-          <input type="email" id="orderEmail" class="form-input" placeholder="mail@example.com" required>
-        </div>
-
-        <button type="submit" class="btn btn-primary btn-glow" style="width: 100%; margin-top: 10px;">
-          Подтвердить заказ и получить бонусы
+        <button type="submit" id="orderSubmitBtn" class="btn btn-primary btn-glow" style="width: 100%; margin-top: 10px;">
+          Получить ссылку на оплату →
         </button>
 
         <p style="text-align: center; font-size: 0.75rem; color: var(--text-dim); margin-top: 14px;">
           Нажимая кнопку, вы соглашаетесь с условиями оферты и политикой конфиденциальности. Никакого спама.
         </p>
       </form>
+    </div>
+  </dialog>
+
+  <!-- ==========================================================================
+       Modern Native Dialogs: Payment Success & Email Notice Modal
+       ========================================================================== -->
+  <dialog id="paymentSuccessModal" closedby="any" aria-labelledby="paymentSuccessTitle">
+    <div class="modal-card success-modal-card">
+      <button class="modal-close-btn" data-close-modal aria-label="Закрыть">✕</button>
+      
+      <div class="success-icon-wrap">
+        <span class="success-icon-symbol">✉️</span>
+      </div>
+
+      <h3 id="paymentSuccessTitle" class="success-title">Заказ оформлен!</h3>
+      
+      <p class="success-subtitle">
+        Ссылка на оплату сформирована и направлена на вашу электронную почту:
+      </p>
+
+      <div class="success-details-box">
+        <div class="success-email-highlight" id="successModalEmail">user@example.com</div>
+        <div class="success-plan-info">
+          <div>
+            <span style="color: var(--text-dim); font-size: 0.8rem; display: block;">Выбранный тариф:</span>
+            <strong id="successModalPlan">Печатная тетрадь (Хит)</strong>
+          </div>
+          <div class="success-plan-price" id="successModalPrice">780 ₽</div>
+        </div>
+      </div>
+
+      <div class="success-instruction">
+        <div class="success-instruction-item">
+          <span class="inst-icon">⚡</span>
+          <span>Письмо со ссылкой на защищённую оплату поступит в течение <strong>1–2 минут</strong>.</span>
+        </div>
+        <div class="success-instruction-item">
+          <span class="inst-icon">📁</span>
+          <span>Если письмо не появилось во «Входящих», проверьте папку <strong>«Спам»</strong> или «Рассылки».</span>
+        </div>
+        <div class="success-instruction-item">
+          <span class="inst-icon">🔒</span>
+          <span>Оплата проходит через официальный шлюз с гарантией безопасности и чеком.</span>
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-primary btn-glow" data-close-modal style="width: 100%; margin-top: 8px;">
+        Отлично, жду письмо
+      </button>
     </div>
   </dialog>
 
@@ -988,6 +1041,7 @@
     <div id="toastNoticeMsg">Заявка успешно отправлена!</div>
   </div>
 
+  <script src="js/config.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
