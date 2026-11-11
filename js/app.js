@@ -774,7 +774,7 @@ function openOrderModal(planName, planPrice) {
 }
 
 // ==========================================================================
-// Telegram Notification Helper
+// Telegram Notification Helper (with Auto-Discovery of Chat ID)
 // ==========================================================================
 function escapeHtml(str) {
   if (!str) return '';
@@ -785,10 +785,60 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
+/**
+ * Автоматическое определение Chat ID получателей.
+ * 1. Если chatId явно указан в config.js — используется он.
+ * 2. Если chatId пустой — опрашиваем getUpdates в Telegram API,
+ *    находя пользователей, нажавших /start в боте.
+ */
+async function getTelegramRecipients(token, explicitChatId) {
+  if (explicitChatId && explicitChatId !== 'YOUR_CHAT_ID') {
+    return [explicitChatId];
+  }
+
+  // 1. Проверяем сохраненные Chat ID в localStorage
+  try {
+    const cached = localStorage.getItem('tg_recipient_chats');
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (e) {}
+
+  // 2. Автоматический опрос Telegram getUpdates
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${token}/getUpdates?limit=25`);
+    const data = await res.json();
+    if (data.ok && Array.isArray(data.result) && data.result.length > 0) {
+      const chats = new Set();
+      data.result.forEach(update => {
+        const msg = update.message || update.channel_post || update.edited_message;
+        if (msg && msg.chat && msg.chat.id) {
+          chats.add(String(msg.chat.id));
+        }
+      });
+
+      if (chats.size > 0) {
+        const ids = Array.from(chats);
+        try {
+          localStorage.setItem('tg_recipient_chats', JSON.stringify(ids));
+        } catch (e) {}
+        return ids;
+      }
+    }
+  } catch (err) {
+    console.warn('[Telegram Order] Автоматический поиск chat_id через getUpdates:', err);
+  }
+
+  return [];
+}
+
 async function sendTelegramOrderNotification(orderData) {
   const config = window.TELEGRAM_CONFIG || {};
   const token = (config.botToken || '').trim();
-  const chatId = (config.chatId || '').trim();
+  const explicitChatId = (config.chatId || '').trim();
 
   const now = new Date();
   const dateStr = now.toLocaleString('ru-RU', {
@@ -811,52 +861,69 @@ async function sendTelegramOrderNotification(orderData) {
     `──────────────────────\n` +
     `👉 <i>Клиент ожидает ссылку на оплату на указанный email.</i>`;
 
-  // Check if credentials are configured
-  if (!token || !chatId || token === 'YOUR_BOT_TOKEN' || chatId === 'YOUR_CHAT_ID') {
+  // Check if bot token is provided
+  if (!token || token === 'YOUR_BOT_TOKEN') {
     if (config.debug) {
       console.warn(
-        '[Telegram Order] ⚠️ Токен бота или Chat ID не настроены в js/config.js.\n' +
-        'Для отправки реальных уведомлений укажите botToken и chatId.\n' +
+        '[Telegram Order] ⚠️ Токен бота не настроен в js/config.js.\n' +
         'Сформированное сообщение для Telegram:\n' + messageText
       );
     }
     return { success: true, simulated: true };
   }
 
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 6000);
+  // Auto-discover recipient Chat IDs from getUpdates if not specified
+  const recipients = await getTelegramRecipients(token, explicitChatId);
 
-    const url = `https://api.telegram.org/bot${token}/sendMessage`;
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text: messageText,
-        parse_mode: 'HTML'
-      }),
-      signal: controller.signal
-    });
-
-    clearTimeout(timeoutId);
-    const result = await response.json();
-
-    if (!response.ok || !result.ok) {
-      console.error('[Telegram Order] ❌ Ошибка ответа Telegram API:', result);
-      return { success: false, error: result };
-    }
-
+  if (recipients.length === 0) {
     if (config.debug) {
-      console.log('[Telegram Order] ✅ Уведомление успешно доставлено в Telegram бот!', result);
+      console.warn(
+        '[Telegram Order] ⏳ Токен бота активен, но клиент ещё не нажал /start в боте!\n' +
+        'Клиенту достаточно открыть бота и нажать Start, после чего он сразу начнёт получать заказы.\n' +
+        'Данные заказа:', orderData
+      );
     }
-    return { success: true, result };
-  } catch (err) {
-    console.error('[Telegram Order] ⚠️ Ошибка при отправке в Telegram:', err);
-    return { success: false, error: err };
+    return { success: true, simulated: true, waitingForStart: true };
   }
+
+  // Send message to all detected recipients
+  let anySuccess = false;
+  for (const chatId of recipients) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 6000);
+
+      const url = `https://api.telegram.org/bot${token}/sendMessage`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: messageText,
+          parse_mode: 'HTML'
+        }),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+      const result = await response.json();
+
+      if (response.ok && result.ok) {
+        anySuccess = true;
+        if (config.debug) {
+          console.log(`[Telegram Order] ✅ Уведомление доставлено в чат ${chatId}:`, result);
+        }
+      } else {
+        console.error(`[Telegram Order] ❌ Ошибка ответа Telegram API для чата ${chatId}:`, result);
+      }
+    } catch (err) {
+      console.error(`[Telegram Order] ⚠️ Ошибка при отправке в чат ${chatId}:`, err);
+    }
+  }
+
+  return { success: anySuccess };
 }
 
 // ==========================================================================
