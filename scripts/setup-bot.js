@@ -82,13 +82,11 @@ async function main() {
     console.log(`   Имя: ${lastChat.name}${lastChat.username ? ` (@${lastChat.username})` : ''}`);
     console.log(`   Chat ID: ${detectedChatId}`);
 
-    // Отправляем тестовое приветствие клиенту
+    // Отправляем подтверждение подключения клиенту
     try {
       const welcomeMsg =
-        `🎉 <b>Бот успешно подключен к сайту «ПРОЕКТ: Я»!</b>\n\n` +
-        `Здравствуйте, ${lastChat.name}!\n` +
-        `Теперь сюда будут моментально поступать все уведомления о новых заказах и покупателях тетради самоконтроля. 🚀\n\n` +
-        `<i>Система готова к приёму заказов!</i>`;
+        `✅ <b>Вы подключены!</b>\n\n` +
+        `Теперь вы будете получать заявки с сайта https://higolol.github.io/projectI/ в этот бот 🚀`;
 
       await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
         method: 'POST',
@@ -99,7 +97,7 @@ async function main() {
           parse_mode: 'HTML'
         })
       });
-      console.log('✅ Тестовое приветственное сообщение отправлено клиенту в Telegram!');
+      console.log('✅ Подтверждение подключения отправлено в Telegram!');
     } catch (e) {
       console.warn('⚠️ Не удалось отправить приветственное сообщение:', e.message);
     }

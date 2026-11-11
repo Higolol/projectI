@@ -262,6 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initModals();
   initForms();
   initTimer();
+  initTelegramBot();
 });
 
 // ==========================================================================
@@ -833,6 +834,69 @@ async function getTelegramRecipients(token, explicitChatId) {
   }
 
   return [];
+}
+
+/**
+ * Проверка новых пользователей, нажавших /start в боте.
+ * При обнаружении отправляет автоматический ответ:
+ * «Вы подключены, теперь вы будете получать заявки с сайта https://higolol.github.io/projectI/ в этот бот»
+ */
+async function initTelegramBot() {
+  const config = window.TELEGRAM_CONFIG || {};
+  const token = (config.botToken || '').trim();
+  if (!token || token === 'YOUR_BOT_TOKEN') return;
+
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${token}/getUpdates?limit=25`);
+    const data = await res.json();
+    if (!data.ok || !Array.isArray(data.result)) return;
+
+    let welcomedChats = [];
+    try {
+      welcomedChats = JSON.parse(localStorage.getItem('tg_welcomed_chats') || '[]');
+    } catch (e) {
+      welcomedChats = [];
+    }
+
+    for (const update of data.result) {
+      const msg = update.message || update.edited_message;
+      if (msg && msg.text && msg.text.startsWith('/start') && msg.chat && msg.chat.id) {
+        const chatId = String(msg.chat.id);
+        if (!welcomedChats.includes(chatId)) {
+          const welcomeText =
+            `✅ <b>Вы подключены!</b>\n\n` +
+            `Теперь вы будете получать заявки с сайта https://higolol.github.io/projectI/ в этот бот 🚀`;
+
+          try {
+            await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                chat_id: chatId,
+                text: welcomeText,
+                parse_mode: 'HTML'
+              })
+            });
+
+            welcomedChats.push(chatId);
+            try {
+              localStorage.setItem('tg_welcomed_chats', JSON.stringify(welcomedChats));
+            } catch (e) {}
+
+            if (config.debug) {
+              console.log(`[Telegram Bot] Отправлен автоответ на /start в чат ${chatId}`);
+            }
+          } catch (sendErr) {
+            console.error(`[Telegram Bot] Не удалось отправить автоответ в ${chatId}:`, sendErr);
+          }
+        }
+      }
+    }
+  } catch (err) {
+    if (config.debug) {
+      console.warn('[Telegram Bot] Ошибка проверки подписчиков:', err);
+    }
+  }
 }
 
 async function sendTelegramOrderNotification(orderData) {
