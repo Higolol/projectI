@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>«ПРОЕКТ: Я» — Тетрадь самоконтроля и целеполагания подростка (13–16 лет)</title>
   <meta name="description" content="Практическая тетрадь самоконтроля подростка на 90 дней. Помогает побороть лень, оторваться от смартфона, ставить цели и развивать полезные привычки без нотаций и скандалов.">
   
@@ -47,11 +47,11 @@
             <button class="btn btn-primary btn-glow" style="width: 100%; margin-bottom: 10px;" data-open-order data-plan-name="Печатная тетрадь (Хит)" data-plan-price="780 ₽">
               Заказать тетрадь от 490 ₽
             </button>
-            <div style="display: flex; gap: 10px; width: 100%;">
-              <a href="https://t.me/" target="_blank" rel="noopener" class="btn btn-secondary btn-sm" style="flex: 1;">
-                Telegram
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; width: 100%;">
+              <a href="https://t.me/ngponomareva" target="_blank" rel="noopener" class="btn btn-secondary btn-sm" style="flex: 1;">
+                Телеграм
               </a>
-              <a href="https://wa.me/" target="_blank" rel="noopener" class="btn btn-secondary btn-sm" style="flex: 1;">
+              <a href="https://wa.me/79032749051" target="_blank" rel="noopener" class="btn btn-secondary btn-sm" style="flex: 1;">
                 WhatsApp
               </a>
             </div>
@@ -59,8 +59,8 @@
         </nav>
 
         <div class="header-actions">
-          <a href="https://t.me/" target="_blank" rel="noopener" class="btn btn-secondary btn-sm header-tg-btn" aria-label="Написать в Telegram">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <a href="https://t.me/ngponomareva" target="_blank" rel="noopener" class="btn btn-secondary btn-sm header-tg-btn" aria-label="Написать в Telegram">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.99 1.27-5.63 3.73-.53.37-1.02.55-1.45.54-.48-.01-1.4-.27-2.09-.49-.84-.27-1.51-.42-1.45-.89.03-.25.38-.51 1.05-.78 4.12-1.79 6.87-2.97 8.24-3.55 3.93-1.65 4.74-1.94 5.27-1.95.12 0 .37.03.54.17.14.12.18.28.2.45-.02.07-.02.21-.04.35z"/>
             </svg>
             <span class="header-tg-text">Telegram</span>
@@ -68,7 +68,7 @@
           <button class="btn btn-primary btn-sm btn-glow header-order-btn" data-open-order data-plan-name="Печатная тетрадь (Хит)" data-plan-price="780 ₽">
             Заказать
           </button>
-          <button class="mobile-menu-toggle" id="menuToggleBtn" aria-label="Открыть меню">
+          <button class="mobile-menu-toggle" id="menuToggleBtn" aria-label="Открыть меню" aria-expanded="false" aria-controls="mainNavLinks">
             <span></span>
             <span></span>
             <span></span>
@@ -517,17 +517,17 @@
         </div>
 
         <!-- Limited time badge & countdown -->
-        <div style="text-align: center; margin-bottom: 24px;">
-          <div style="display: inline-flex; align-items: center; gap: 12px; background: rgba(255, 106, 0, 0.12); border: 1px solid rgba(255, 106, 0, 0.3); padding: 8px 20px; border-radius: var(--radius-full);">
-            <span style="color: var(--accent-orange); font-weight: 700; font-size: 0.9rem;">🔥 Специальная цена со скидкой до 50% закончится через:</span>
-            <div style="font-family: var(--font-heading); font-weight: 800; color: var(--accent-gold); letter-spacing: 0.05em;">
+        <div class="pricing-countdown-wrap">
+          <div class="pricing-countdown-pill">
+            <span class="pricing-countdown-label">🔥 Специальная цена со скидкой до 50% закончится через:</span>
+            <div class="pricing-countdown-timer">
               <span id="timerHours">23</span>:<span id="timerMinutes">45</span>:<span id="timerSeconds">12</span>
             </div>
           </div>
         </div>
 
-        <div style="text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 30px;">
-          <span style="background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-subtle); padding: 6px 16px; border-radius: var(--radius-full);">
+        <div class="pricing-hint-wrap">
+          <span class="pricing-hint-pill">
             💡 Нажмите на карточку любого формата для выбора
           </span>
         </div>
@@ -818,14 +818,14 @@
             <button class="btn btn-primary btn-lg btn-glow" data-open-order data-plan-name="Печатная тетрадь (Хит)" data-plan-price="780 ₽">
               Заказать тетрадь со скидкой 40%
             </button>
-            <a href="https://t.me/" target="_blank" rel="noopener" class="btn btn-secondary btn-lg">
+            <a href="https://t.me/ngponomareva" target="_blank" rel="noopener" class="btn btn-secondary btn-lg">
               Написать в Telegram
             </a>
           </div>
 
-          <div style="font-size: 0.88rem; color: var(--text-dim); display: flex; align-items: center; justify-content: center; gap: 8px;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-            Безопасная оплата • Гарантия возврата 14 дней • Мгновенная отправка
+          <div class="cta-guarantee-note">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Безопасная оплата • Гарантия возврата 14 дней • Мгновенная отправка</span>
           </div>
         </div>
       </div>
@@ -862,9 +862,8 @@
         <div class="footer-links-col">
           <h4>Контакты и поддержка</h4>
           <ul>
-            <li><a href="https://t.me/" target="_blank" rel="noopener">Telegram-канал проекта</a></li>
-            <li><a href="https://wa.me/" target="_blank" rel="noopener">WhatsApp поддержка</a></li>
-            <li><span>Email: support@project-ya.ru</span></li>
+            <li><a href="https://t.me/ngponomareva" target="_blank" rel="noopener">Телеграм</a></li>
+            <li><a href="https://wa.me/79032749051" target="_blank" rel="noopener">WhatsApp: +7 903 274 90 51</a></li>
             <li><span>Ежедневно с 9:00 до 21:00 МСК</span></li>
           </ul>
         </div>
@@ -872,7 +871,7 @@
 
       <div class="footer-bottom">
         <div>© 2026 «ПРОЕКТ: Я». Все права защищены.</div>
-        <div style="display: flex; gap: 20px;">
+        <div class="footer-legal-links">
           <a href="#" style="color: var(--text-dim);">Политика конфиденциальности</a>
           <a href="#" style="color: var(--text-dim);">Публичная оферта</a>
         </div>
@@ -884,13 +883,13 @@
        Mobile Sticky Action Bar
        ========================================================================== -->
   <div class="mobile-sticky-bar">
-    <button class="mobile-bar-menu-btn" id="mobileStickyMenuBtn" aria-label="Открыть меню">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    <button class="mobile-bar-menu-btn" id="mobileStickyMenuBtn" aria-label="Открыть меню" aria-expanded="false" aria-controls="mainNavLinks">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
       <span>Меню</span>
     </button>
-    <div>
-      <div style="font-size: 0.72rem; color: var(--text-dim);">Тетрадь самоконтроля</div>
-      <div style="font-family: var(--font-heading); font-weight: 800; font-size: 1.05rem; color: var(--accent-gold);">от 490 ₽</div>
+    <div class="mobile-sticky-price">
+      <div class="mobile-sticky-title">Тетрадь самоконтроля</div>
+      <div class="mobile-sticky-cost">от 490 ₽</div>
     </div>
     <button class="btn btn-primary btn-sm btn-glow" data-open-order data-plan-name="Печатная тетрадь (Хит)" data-plan-price="780 ₽">
       Заказать
@@ -970,7 +969,7 @@
 
         <div class="form-group">
           <label for="orderContact">Телефон или ник в Telegram (по желанию):</label>
-          <input type="text" id="orderContact" class="form-input" placeholder="+7 (999) 000-00-00 или @username">
+          <input type="text" id="orderContact" class="form-input" placeholder="+7 999 000-00-00 или @ник">
         </div>
 
         <button type="submit" id="orderSubmitBtn" class="btn btn-primary btn-glow" style="width: 100%; margin-top: 10px;">

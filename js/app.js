@@ -282,10 +282,17 @@ function initHeader() {
     }
   }, { passive: true });
 
+  function setMenuState(isOpen) {
+    navLinks?.classList.toggle('open', isOpen);
+    toggleBtn?.classList.toggle('open', isOpen);
+    toggleBtn?.setAttribute('aria-expanded', String(Boolean(isOpen)));
+    stickyMenuBtn?.setAttribute('aria-expanded', String(Boolean(isOpen)));
+  }
+
   function toggleMenu(e) {
     if (e) e.stopPropagation();
-    const isOpen = navLinks?.classList.toggle('open');
-    toggleBtn?.classList.toggle('open', isOpen);
+    const isOpen = !navLinks?.classList.contains('open');
+    setMenuState(isOpen);
   }
 
   toggleBtn?.addEventListener('click', toggleMenu);
@@ -294,24 +301,21 @@ function initHeader() {
   if (navLinks) {
     navLinks.querySelectorAll('a, button').forEach(el => {
       el.addEventListener('click', () => {
-        navLinks.classList.remove('open');
-        toggleBtn?.classList.remove('open');
+        setMenuState(false);
       });
     });
 
     // Close on click outside
     document.addEventListener('click', (e) => {
       if (!navLinks.contains(e.target) && !toggleBtn?.contains(e.target) && !stickyMenuBtn?.contains(e.target)) {
-        navLinks.classList.remove('open');
-        toggleBtn?.classList.remove('open');
+        setMenuState(false);
       }
     });
 
     // Close on Escape key
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && navLinks.classList.contains('open')) {
-        navLinks.classList.remove('open');
-        toggleBtn?.classList.remove('open');
+        setMenuState(false);
       }
     });
   }
