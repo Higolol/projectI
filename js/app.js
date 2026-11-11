@@ -913,6 +913,19 @@ async function sendTelegramOrderNotification(orderData) {
     minute: '2-digit'
   });
 
+  const clientName = orderData.name ? orderData.name.trim() : 'дорогой друг';
+  const mailSubject = encodeURIComponent(`Ссылка на оплату: тетрадь «ПРОЕКТ: Я» (${orderData.plan})`);
+  const mailBody = encodeURIComponent(
+    `Здравствуйте, ${clientName}!\n\n` +
+    `Благодарим вас за заказ тетради самоконтроля «ПРОЕКТ: Я»!\n` +
+    `Выбранный тариф: ${orderData.plan} — ${orderData.price}.\n\n` +
+    `Ваша персональная ссылка на оплату:\n` +
+    `[ВСТАВЬТЕ СЮДА ССЫЛКУ НА ОПЛАТУ]\n\n` +
+    `После оплаты материалы будут моментально отправлены вам на этот email.\n\n` +
+    `С уважением,\nМария Маркина\nАвтор проекта «ПРОЕКТ: Я»`
+  );
+  const mailtoUrl = `mailto:${orderData.email}?subject=${mailSubject}&body=${mailBody}`;
+
   const messageText =
     `🔔 <b>НОВЫЙ ЗАКАЗ НА САЙТЕ!</b>\n` +
     `──────────────────────\n` +
@@ -923,7 +936,9 @@ async function sendTelegramOrderNotification(orderData) {
     (orderData.contact ? `📱 <b>Телефон/TG:</b> ${escapeHtml(orderData.contact)}\n` : '') +
     `⏰ <b>Время заказа:</b> ${dateStr} (МСК)\n` +
     `──────────────────────\n` +
-    `👉 <i>Клиент ожидает ссылку на оплату на указанный email.</i>`;
+    `👉 <b>Действие:</b> отправьте клиенту ссылку на оплату:\n` +
+    `📨 <a href="${mailtoUrl}"><b>Нажмите сюда, чтобы открыть готовое письмо</b></a>\n` +
+    `<i>(или просто скопируйте email в 1 клик выше)</i>`;
 
   // Check if bot token is provided
   if (!token || token === 'YOUR_BOT_TOKEN') {
@@ -1066,7 +1081,7 @@ function initForms() {
 
     // Also trigger celebratory toast
     if (toast && toastMsg) {
-      toastMsg.innerHTML = `<strong>Ссылка на оплату отправлена!</strong> На почту <u>${email}</u> (${plan}).`;
+      toastMsg.innerHTML = `<strong>Заявка принята!</strong> Ссылка на оплату тарифа «${plan}» будет направлена на почту <u>${email}</u>.`;
       toast.classList.add('show');
       setTimeout(() => {
         toast.classList.remove('show');
