@@ -112,9 +112,9 @@ async function main() {
   // 3. Обновляем js/config.js
   if (fs.existsSync(configPath)) {
     let content = fs.readFileSync(configPath, 'utf8');
-    content = content.replace(/botToken:\s*['"][^'"]*['"]/, `botToken: '${token}'`);
+    content = content.replace(/(botToken:\s*['"])[^'"]*(['"])/g, `$1${token}$2`);
     if (detectedChatId) {
-      content = content.replace(/chatId:\s*['"][^'"]*['"]/, `chatId: '${detectedChatId}'`);
+      content = content.replace(/(chatId:\s*['"])[^'"]*(['"])/g, `$1${detectedChatId}$2`);
     }
     fs.writeFileSync(configPath, content, 'utf8');
     console.log(`\n💾 Конфигурационный файл js/config.js успешно обновлен!`);
