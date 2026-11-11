@@ -14,7 +14,7 @@ window.TELEGRAM_CONFIG = {
   botToken: '9142810732:AAFQAGdzPsehIZ3CQ1DIFM-49otj6Hiwxfo',
 
   // ID чата (можно оставить пустым — определится автоматически по нажатию /start)
-  chatId: '',
+  chatId: '281435251',
 
   // Включить подробные логи в консоли браузера (F12)
   debug: true

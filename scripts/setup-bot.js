@@ -82,6 +82,16 @@ async function main() {
     console.log(`   Имя: ${lastChat.name}${lastChat.username ? ` (@${lastChat.username})` : ''}`);
     console.log(`   Chat ID: ${detectedChatId}`);
 
+    // Подтверждаем обработанные обновления в Telegram, чтобы они не хранились в очереди getUpdates
+    const maxUpdateId = updates.reduce((max, u) => Math.max(max, u.update_id || 0), 0);
+    if (maxUpdateId > 0) {
+      try {
+        await fetch(`https://api.telegram.org/bot${token}/getUpdates?offset=${maxUpdateId + 1}`);
+      } catch (e) {
+        console.warn('⚠️ Не удалось подтвердить offset обновлений:', e.message);
+      }
+    }
+
     // Отправляем подтверждение подключения клиенту
     try {
       const welcomeMsg =
